@@ -1,18 +1,10 @@
-const Button = ({ onInteractTask, text, status }) => {
+const Button = ({ text, status, onAction }) => {
+  const buttonStyle =
+    "edit-task-button " + (status === "edit" ? null : "delete");
+
   return (
     <>
-      <button
-        style={
-          status === "edit"
-            ? { backgroundColor: "yellow" }
-            : { backgroundColor: "red" }
-        }
-        className={"edit-task-button"}
-        type="submit"
-        name="status"
-        status="edit"
-        onClick={onInteractTask}
-      >
+      <button className={buttonStyle} onClick={onAction}>
         {text}
       </button>
     </>

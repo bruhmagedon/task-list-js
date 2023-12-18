@@ -1,93 +1,51 @@
 import { useState, useEffect } from "react";
 import Button from "../button/button";
+import { useTask } from "../app/app";
+import Service from "../../services/http.hook";
 
-const EditInput = (
-    panelStatus,
-    onUpdateAppSearch,
-    currentTaskInfo,
-    onTaskSubmit
-) => {
-    const [status, setStatus] = useState("");
-    const [term, setTerm] = useState("");
-    const [text, setText] = useState("");
-    const [id, setId] = useState(-1);
+const EditInput = () => {
+  const { currentTask, setCurrentTask } = useTask();
 
-    //Первая отрисовка компонета - задаем дефолтный стейт
-    useEffect(() => {
-        onUpdateText(currentTaskInfo?.text, currentTaskInfo?.id);
-    });
-    // componentDidMount = () => {
-    //   this.onUpdateText(
-    //     this.props.currentTaskInfo?.text,
-    //     this.props.currentTaskInfo?.id
-    //   );
-    // };
+  const { deleteTask, updateTask } = Service();
 
-    //   //Меняем стейт при выборе другой задачи
-    //   componentDidUpdate = () => {
-    //     if (this.state.id != this.props.currentTaskInfo?.id) {
-    //       this.onUpdateText(
-    //         this.props.currentTaskInfo?.text,
-    //         this.props.currentTaskInfo?.id
-    //       );
-    //     }
-    //   };
+  const [text, setText] = useState("");
 
-    //Обновление состояние при перерендере или первой отрисовки компонента
-    const onUpdateText = (updateText, updateId) => {
-        setText(updateText);
-        setId(updateId);
+  useEffect(() => {
+    setText(currentTask.Message);
+  }, [currentTask]);
+
+  const onUpdateTask = async (e) => {
+    e.preventDefault();
+    const updatedTask = {
+      Id: currentTask.Id,
+      Status: Number(currentTask.Status),
+      Message: text,
     };
 
-    //Изменение стейта через инпут (двойная связь)
-    const onEditTaskInput = (e) => {
-        this.setState({
-            // мейби можно сделать через редьюсер
-            [e.target.name]: e.target.value,
-        });
-    };
+    await updateTask(JSON.stringify(updatedTask));
+  };
 
-    //Получаем статус задачи
-    const onInteractTask = (e) => {
-        this.setState({
-            [e.target.name]: e.currentTarget.getAttribute("status"),
-        });
-    };
+  const onDelete = async (e) => {
+    e.preventDefault();
+    setCurrentTask("");
+    await deleteTask(currentTask.Id);
+  };
 
-    //Отмена отправки формы по нажатию Enter
-    const onKey = (e) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-        }
-    };
-    return (
-        <form
-            className={"task-text-panel save-changes"}
-            onSubmit={(e) => onTaskSubmit(e, text, id, status)}
-        >
-            <input
-                type="text"
-                className={"task-text-input save-changes"}
-                placeholder={"Введите задачу"}
-                name="text"
-                value={text || ""}
-                onChange={onEditTaskInput}
-                onKeyDown={onKey}
-            />
-            <nav className="edit-container-buttons">
-                <Button
-                    text="Редактировать"
-                    status={"edit"}
-                    onInteractTask={onInteractTask}
-                />
-                <Button
-                    text="Удалить"
-                    status={"delete"}
-                    onInteractTask={onInteractTask}
-                />
-            </nav>
-        </form>
-    );
+  return (
+    <form className={"task-text-panel save-changes"}>
+      <input
+        type="text"
+        className={"task-text-input save-changes"}
+        placeholder={"Введите задачу"}
+        value={text || ""}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <nav className="edit-container-buttons">
+        <Button text="Редактировать" status={"edit"} onAction={onUpdateTask} />
+        <Button text="Удалить" status={"delete"} onAction={onDelete} />
+      </nav>
+    </form>
+  );
 };
 
 export default EditInput;

@@ -1,44 +1,25 @@
 import EditInput from "../edit-input/edit-input";
+import { useTask } from "../app/app";
 
-const EditPanel = ({
-  onCloseEditPanel,
-  currentTaskId,
-  currentTaskInfo,
-  onChangeTask,
-}) => {
-  //Буферный метод между компонентами для передачи состояния
-  //e - объект события, text - текст выбранной задачи,
-  //id - её идентификатор, status - что с задачей нужно сделать
-  const onTaskSubmit = (e, text, id, status) => {
-    e.preventDefault(); //чтобы страница не перезагружалась
-    if (
-      (typeof text === "undefined" || text.trimLeft() === "") &&
-      status != "delete"
-    ) {
-      alert("Введите текст в поле");
-      return;
-    }
-    //Передаём новую информацию вверх
-    if (status === "add") {
-      onChangeTask(e, text.trimLeft().trimRight(), currentTaskId, status);
-    } else {
-      onChangeTask(e, text.trimLeft().trimRight(), id, status);
-    }
+const EditPanel = () => {
+  const {
+    currentTask: { Id },
+    setCurrentTask,
+  } = useTask();
+
+  //Закрыть панель редактирования
+  const onClosePanel = () => {
+    setCurrentTask("");
   };
 
-  //Условный рендеринг
-  if (currentTaskId != -1) {
+  // Если задача выбрана
+  if (Id) {
     return (
       <div className="edit-container edit-task">
         <header className="edit-container-header">
-          <span className="edit-close" onClick={onCloseEditPanel}></span>
+          <span className="edit-close" onClick={onClosePanel}></span>
         </header>
-        <EditInput
-          panelStatus={true}
-          currentTaskId={currentTaskId}
-          currentTaskInfo={currentTaskInfo[0]}
-          onTaskSubmit={onTaskSubmit}
-        />
+        <EditInput />
       </div>
     );
   }

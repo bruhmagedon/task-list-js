@@ -1,30 +1,32 @@
-import { useEffect, useState } from "react";
+import Service from "../../services/http.hook";
+import { useTask } from "../app/app";
 
-const TaskItem = ({ taskInfo: { id, isChecked, text } }) => {
-    const [status, setStatus] = useState(isChecked);
+const TaskItem = ({ taskInfo: { Id, Status, Message } }) => {
+  const { setCurrentTask } = useTask();
+  const { updateTask } = Service();
 
-    useEffect(() => {
-        // console.log(status);
-    }, []);
+  //* Изменение статуса задачи
+  const onUpdateTaskStatus = async () => {
+    const updatedTask = {
+      Id,
+      Status: Number(!Status),
+      Message,
+    };
+    await updateTask(JSON.stringify(updatedTask));
+  };
 
-    const itemTaskIcons = "item-icon " + (!isChecked ? "unchecked" : "");
+  const onChooseTask = () => {
+    setCurrentTask({ Id, Status, Message });
+  };
 
-    return (
-        <li className="item" value={id}>
-            <span
-                className={itemTaskIcons}
-                // onClick={(e) => onCheckTask(id)}
-                // data-toggle="isChecked"
-            ></span>
-            {/* Изменить / удалить можно только если задача в процессе */}
-            <p
-                className="item-text"
-                // onClick={isChecked ? onChooseTask : null}
-                // id={id}
-            >
-                {text}
-            </p>
-        </li>
-    );
+  const itemTaskIcons = "item-icon " + (!Status ? "unchecked" : "");
+  return (
+    <li className="item" value={Id}>
+      <span className={itemTaskIcons} onClick={onUpdateTaskStatus}></span>
+      <p className="item-text" onClick={!Status ? () => onChooseTask() : null}>
+        {Message}
+      </p>
+    </li>
+  );
 };
 export default TaskItem;

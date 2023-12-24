@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTask } from "../app/app";
 import Service from "../../services/http.hook";
 import FindInput from "../find-input/find-input";
 import TaskItem from "../task-item/task-item";
@@ -8,19 +9,21 @@ const TaskList = () => {
   const [term, setTerm] = useState("");
 
   // ! кастыль
-  const [reRender, onRerender] = useState(null);
-
-  const { getTasks, createTask } = Service();
+  const { setCurrentTask, currentTask, reRender, onRerender } = useTask();
+  const { getTask, getTasks, createTask } = Service();
 
   //пока что автоматическое обновление будет выглядеть так
   useEffect(() => {
     onRequest();
-  }, [reRender]);
+    console.log("render");
+  }, [reRender, currentTask]);
 
-  //! получаем список задач с базы
+  // получаем список задач с базы
   const onRequest = () => {
-    // console.log("asd");
-    getTasks().then((tasks) => setData(tasks));
+    // getTask(1).then((tasks) => setData(tasks));
+    getTasks()
+      .then((tasks) => tasks.sort((x, y) => x.Id - y.Id))
+      .then((tasks) => setData(tasks));
   };
 
   //Обновление строки поиска

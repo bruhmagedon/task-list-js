@@ -1,14 +1,7 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback } from "react";
 
 const Service = () => {
   const _apiBase = "http://localhost:80/";
-
-  //   const { url, setUrl } = useState("");
-  //   const { method, setMethod } = useState("");
-
-  useEffect(() => {
-    // request(url, method);
-  });
 
   const request = useCallback(
     async (
@@ -31,6 +24,7 @@ const Service = () => {
           throw new Error(`Could not fetch ${url}, status ${response.status}`);
         }
         const data = await response.json();
+        // console.log(data);
         return data;
       } catch (e) {
         throw e;
@@ -42,6 +36,7 @@ const Service = () => {
   //! ERR
   const getTask = (id) => {
     const method = "GET";
+    // const url = "https://jsonplaceholder.typicode.com/todos/1";
     const url = `${_apiBase}task/${id}`;
     return request(url, method);
   };
@@ -61,7 +56,7 @@ const Service = () => {
 
   //! ERR
   const updateTask = (json) => {
-    const method = "POST";
+    const method = "PUT";
     const url = `${_apiBase}update`;
     // const url = "https://jsonplaceholder.typicode.com/todos";
     const body = json;

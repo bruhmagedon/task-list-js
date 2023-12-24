@@ -11,11 +11,14 @@ export const useTask = () => {
 };
 
 const App = () => {
+  const [reRender, onRerender] = useState(null);
   const [currentTask, setCurrentTask] = useState("");
 
   return (
     <div className="app-container">
-      <TaskContext.Provider value={{ currentTask, setCurrentTask }}>
+      <TaskContext.Provider
+        value={{ currentTask, setCurrentTask, reRender, onRerender }}
+      >
         <TaskList />
         <EditPanel />
       </TaskContext.Provider>

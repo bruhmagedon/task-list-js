@@ -2,7 +2,7 @@ import Service from "../../services/http.hook";
 import { useTask } from "../app/app";
 
 const TaskItem = ({ taskInfo: { Id, Status, Message } }) => {
-  const { setCurrentTask } = useTask();
+  const { setCurrentTask, reRender, onRerender } = useTask();
   const { updateTask } = Service();
 
   //* Изменение статуса задачи
@@ -12,7 +12,7 @@ const TaskItem = ({ taskInfo: { Id, Status, Message } }) => {
       Status: Number(!Status),
       Message,
     };
-    await updateTask(JSON.stringify(updatedTask));
+    onRerender(await updateTask(JSON.stringify(updatedTask)));
   };
 
   const onChooseTask = () => {

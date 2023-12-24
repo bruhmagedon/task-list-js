@@ -4,8 +4,8 @@ import { useTask } from "../app/app";
 import Service from "../../services/http.hook";
 
 const EditInput = () => {
-  const { currentTask, setCurrentTask, reRender, onRerender } = useTask();
-  const { deleteTask, updateTask } = Service();
+  const { currentTask, setCurrentTask, onRequest } = useTask();
+  const { deleteTask, updateTask, process, deleteProcess } = Service();
 
   const [text, setText] = useState("");
 
@@ -13,15 +13,23 @@ const EditInput = () => {
     setText(currentTask.Message);
   }, [currentTask]);
 
+  useEffect(() => {
+    if (process === "confirmed" || deleteProcess === "confirmed") {
+      onRequest();
+    }
+    console.log(process);
+  }, [process]);
+
   const onUpdateTask = async (e) => {
     e.preventDefault();
+    if (text === "") return;
     const updatedTask = {
       Id: currentTask.Id,
       Status: Number(currentTask.Status),
       Message: text,
     };
 
-    onRerender(await updateTask(JSON.stringify(updatedTask)));
+    await updateTask(JSON.stringify(updatedTask));
   };
 
   const onDelete = async (e) => {

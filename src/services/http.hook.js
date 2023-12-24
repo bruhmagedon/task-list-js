@@ -1,7 +1,9 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 const Service = () => {
   const _apiBase = "http://localhost:80/";
+
+  const [process, setProcess] = useState("waiting");
 
   const request = useCallback(
     async (
@@ -13,8 +15,10 @@ const Service = () => {
         Accept: "application/json",
       }
     ) => {
-      console.log(url, method, body);
       try {
+        console.log(url, method, body);
+        setProcess("loading");
+
         const response = await fetch(url, {
           method,
           body,
@@ -24,9 +28,11 @@ const Service = () => {
           throw new Error(`Could not fetch ${url}, status ${response.status}`);
         }
         const data = await response.json();
-        // console.log(data);
+
+        setProcess("confirmed");
         return data;
       } catch (e) {
+        setProcess("error");
         throw e;
       }
     },
@@ -35,8 +41,8 @@ const Service = () => {
 
   //! ERR
   const getTask = (id) => {
-    const method = "GET";
     // const url = "https://jsonplaceholder.typicode.com/todos/1";
+    const method = "GET";
     const url = `${_apiBase}task/${id}`;
     return request(url, method);
   };
@@ -65,9 +71,9 @@ const Service = () => {
 
   //! ERR
   const deleteTask = (id) => {
+    // const url = "https://jsonplaceholder.typicode.com/todos/3";
     const method = "DELETE";
     const url = `${_apiBase}delete/${id}`;
-    // const url = "https://jsonplaceholder.typicode.com/todos/3";
     return request(url, method);
   };
 
@@ -77,6 +83,7 @@ const Service = () => {
     createTask,
     updateTask,
     deleteTask,
+    process,
   };
 };
 

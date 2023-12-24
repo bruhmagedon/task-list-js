@@ -4,27 +4,30 @@ import Service from "../../services/http.hook";
 import FindInput from "../find-input/find-input";
 import TaskItem from "../task-item/task-item";
 
-const TaskList = () => {
-  const [data, setData] = useState([]);
+const TaskList = ({ getOnRequest }) => {
+  // const [data, setData] = useState([]);
   const [term, setTerm] = useState("");
+  const { data, onRequest } = useTask();
+  const { createTask, process } = Service();
 
-  // ! кастыль
-  const { setCurrentTask, currentTask, reRender, onRerender } = useTask();
-  const { getTask, getTasks, createTask } = Service();
+  // первый рендер - обращаемся напрямую к серверу
+  // useEffect(() => {
+  //   onRequest();
+  // }, []);
 
-  //пока что автоматическое обновление будет выглядеть так
+  // ререндер при обновлении базы
   useEffect(() => {
-    onRequest();
-    console.log("render");
-  }, [reRender, currentTask]);
+    if (process === "confirmed" && term === "") {
+      onRequest();
+    }
+  }, [process]);
 
   // получаем список задач с базы
-  const onRequest = () => {
-    // getTask(1).then((tasks) => setData(tasks));
-    getTasks()
-      .then((tasks) => tasks.sort((x, y) => x.Id - y.Id))
-      .then((tasks) => setData(tasks));
-  };
+  // const onRequest = () => {
+  //   getTasks()
+  //     .then((tasks) => tasks.sort((x, y) => x.Id - y.Id))
+  //     .then((tasks) => setData(tasks));
+  // };
 
   //Обновление строки поиска
   const onUpdateSearch = (e) => {
@@ -52,12 +55,12 @@ const TaskList = () => {
       Message: term,
     };
 
-    onRerender(await createTask(JSON.stringify(newTask)));
+    await createTask(JSON.stringify(newTask));
   };
 
   //Cписок задач
   const tasks = searchEmp(data, term).map((task) => {
-    return <TaskItem key={task.Id} taskInfo={task} />;
+    return <TaskItem key={task.Id} taskInfo={task} onRequest={onRequest} />;
   });
 
   return (

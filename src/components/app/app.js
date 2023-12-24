@@ -1,8 +1,9 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import EditPanel from "../edit-panel/edit-panel";
 import TaskList from "../task-list/task-list";
 
 import "./app.scss";
+import Service from "../../services/http.hook";
 
 // Контекст для проброса пропсов ниже
 const TaskContext = createContext();
@@ -11,13 +12,25 @@ export const useTask = () => {
 };
 
 const App = () => {
-  const [reRender, onRerender] = useState(null);
   const [currentTask, setCurrentTask] = useState("");
+  const [data, setData] = useState([]);
+
+  const { getTasks } = Service();
+
+  useEffect(() => {
+    onRequest();
+  }, []);
+
+  const onRequest = () => {
+    getTasks()
+      .then((tasks) => tasks.sort((x, y) => x.Id - y.Id))
+      .then((tasks) => setData(tasks));
+  };
 
   return (
     <div className="app-container">
       <TaskContext.Provider
-        value={{ currentTask, setCurrentTask, reRender, onRerender }}
+        value={{ data, onRequest, currentTask, setCurrentTask }}
       >
         <TaskList />
         <EditPanel />

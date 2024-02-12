@@ -8,35 +8,68 @@ import Service from "../../services/http.hook";
 // Контекст для проброса пропсов ниже
 const TaskContext = createContext();
 export const useTask = () => {
-  return useContext(TaskContext);
+    return useContext(TaskContext);
 };
 
+const TASK_DATA = [
+    {
+        Id: 1,
+        Status: 1,
+        Message: "аа похуй",
+    },
+    {
+        Id: 1,
+        Status: 1,
+        Message: "аа похуй",
+    },
+    {
+        Id: 1,
+        Status: 1,
+        Message: "аа похуй",
+    },
+    {
+        Id: 1,
+        Status: 1,
+        Message: "аа похуй",
+    },
+    {
+        Id: 1,
+        Status: 1,
+        Message: "аа похуй",
+    },
+    {
+        Id: 1,
+        Status: 1,
+        Message: "аа похуй",
+    },
+];
+
 const App = () => {
-  const [currentTask, setCurrentTask] = useState("");
-  const [data, setData] = useState([]);
+    const [currentTask, setCurrentTask] = useState("");
+    const [data, setData] = useState(TASK_DATA);
 
-  const { getTasks } = Service();
+    const { getTasks } = Service();
 
-  useEffect(() => {
-    onRequest();
-  }, []);
+    useEffect(() => {
+        // onRequest();
+    }, []);
 
-  const onRequest = () => {
-    getTasks()
-      .then((tasks) => tasks.sort((x, y) => x.Id - y.Id))
-      .then((tasks) => setData(tasks));
-  };
+    const onRequest = () => {
+        getTasks()
+            .then((tasks) => tasks.sort((x, y) => x.Id - y.Id))
+            .then((tasks) => setData(tasks));
+    };
 
-  return (
-    <div className="app-container">
-      <TaskContext.Provider
-        value={{ data, onRequest, currentTask, setCurrentTask }}
-      >
-        <TaskList />
-        <EditPanel />
-      </TaskContext.Provider>
-    </div>
-  );
+    return (
+        <div className="app-container">
+            <TaskContext.Provider
+                value={{ data, onRequest, currentTask, setCurrentTask }}
+            >
+                <TaskList />
+                <EditPanel />
+            </TaskContext.Provider>
+        </div>
+    );
 };
 
 export default App;

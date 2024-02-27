@@ -16,7 +16,6 @@ const Service = () => {
       }
     ) => {
       try {
-        console.log(url, method, body);
         setProcess("loading");
 
         const response = await fetch(url, {
@@ -39,9 +38,7 @@ const Service = () => {
     []
   );
 
-  //! ERR
   const getTask = (id) => {
-    // const url = "https://jsonplaceholder.typicode.com/todos/1";
     const method = "GET";
     const url = `${_apiBase}task/${id}`;
     return request(url, method);
@@ -60,18 +57,14 @@ const Service = () => {
     return request(url, method, body);
   };
 
-  //! ERR
   const updateTask = (json) => {
     const method = "PUT";
     const url = `${_apiBase}update`;
-    // const url = "https://jsonplaceholder.typicode.com/todos";
     const body = json;
     return request(url, method, body);
   };
 
-  //! ERR
   const deleteTask = (id) => {
-    // const url = "https://jsonplaceholder.typicode.com/todos/3";
     const method = "DELETE";
     const url = `${_apiBase}delete/${id}`;
     return request(url, method);
